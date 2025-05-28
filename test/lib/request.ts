@@ -1,6 +1,6 @@
 import * as request from 'supertest';
 import 'dotenv/config';
-import { PORT } from 'src/helper';
+import { PORT } from '../../src/helper';
 
 const port = process.env.PORT || PORT;
 
