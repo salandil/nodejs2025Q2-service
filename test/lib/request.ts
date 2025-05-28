@@ -1,7 +1,8 @@
 import * as request from 'supertest';
 import 'dotenv/config';
+import { PORT } from 'src/helper';
 
-const port = process.env.PORT || 4000;
+const port = process.env.PORT || PORT;
 
 const host = `localhost:${port}`;
 const _request = request(host);
