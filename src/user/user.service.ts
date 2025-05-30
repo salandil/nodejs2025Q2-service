@@ -4,8 +4,6 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
 import { users } from '../data/database';
 import { randomUUID } from 'node:crypto';
-import { version } from 'node:os';
-import { NotFoundError } from 'rxjs';
 
 @Injectable()
 export class UserService {
