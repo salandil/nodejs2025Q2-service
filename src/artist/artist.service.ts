@@ -24,7 +24,7 @@ export class ArtistService {
   findOne(id: string) {
     const artist = artists.find(artist => artist.id === id);
     if (!artist) {
-      throw new NotFoundException(`Artist with id ${id} not found`);
+      throw new NotFoundException(`Artist with id: ${id} not found`);
     }
     return artist;
   }
@@ -32,7 +32,7 @@ export class ArtistService {
   update(id: string, updateArtistDto: UpdateArtistDto) {
     const index = artists.findIndex(artist => artist.id === id);
     if (index === -1) {
-      throw new NotFoundException(`Artist with id ${id} not found`);
+      throw new NotFoundException(`Artist with id: ${id} not found`);
     }
     const newArtist = {
       ...artists[index],
@@ -45,7 +45,7 @@ export class ArtistService {
   remove(id: string) {
     const index = artists.findIndex(artist => artist.id === id);
     if (index === -1) {
-      throw new NotFoundException(`Artist with id ${id} not found`);
+      throw new NotFoundException(`Artist with id: ${id} not found`);
     }
     artists.splice(index, 1);
     return ;

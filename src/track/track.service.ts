@@ -23,7 +23,7 @@ export class TrackService {
   findOne(id: string) {
     const trackIndex = tracks.findIndex((track: Track) => track.id === id);
     if (trackIndex === -1) {
-      throw new NotFoundException(`Track with id ${id} not found`);
+      throw new NotFoundException(`Track with id: ${id} not found`);
     }
     return tracks[trackIndex];
   }
@@ -31,7 +31,7 @@ export class TrackService {
   update(id: string, updateTrackDto: UpdateTrackDto) {
     const trackIndex = tracks.findIndex((track: Track) => track.id === id);
     if (trackIndex === -1) {
-      throw new NotFoundException(`Track with id ${id} not found`);
+      throw new NotFoundException(`Track with id: ${id} not found`);
     }
     const newTrack = {
       ...tracks[trackIndex],
@@ -43,7 +43,7 @@ export class TrackService {
   remove(id: string) {
     const index = tracks.findIndex((track: Track) => track.id === id);
     if (index === -1) {
-      throw new NotFoundException(`Track with id ${id} not found`);
+      throw new NotFoundException(`Track with id: ${id} not found`);
     }
     tracks.splice(index, 1);
     return;

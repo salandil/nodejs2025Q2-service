@@ -35,7 +35,7 @@ export class UserService {
   findOne(id: string) {
     const user = users.find(user => user.id === id)
     if (!user) {
-      throw new NotFoundException(`User with id ${id} not found`);
+      throw new NotFoundException(`User with id: ${id} not found`);
     }
     return this.formatUser(user);
   }
@@ -43,7 +43,7 @@ export class UserService {
   update(id: string, updateUserDto: UpdateUserDto) {
     const index = users.findIndex(user => user.id === id);
     if (index === -1) {
-      throw new NotFoundException(`User with id ${id} not found`);
+      throw new NotFoundException(`User with id: ${id} not found`);
     }
     if (users[index].password !== updateUserDto.oldPassword){
       throw new ForbiddenException(`Old password is incorrect`);
@@ -61,7 +61,7 @@ export class UserService {
   remove(id: string) {
     const index = users.findIndex(user => user.id === id);
     if (index === -1) {
-      throw new NotFoundException(`User with id ${id} not found`);
+      throw new NotFoundException(`User with id: ${id} not found`);
     }
     users.splice(index, 1);
     return ;
