@@ -1,12 +1,15 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateTrackDto } from './dto/create-track.dto';
 import { UpdateTrackDto } from './dto/update-track.dto';
-import { favorites, tracks } from 'src/data/database';
+import { tracks } from 'src/data/database';
 import { randomUUID } from 'node:crypto';
 import { Track } from './entities/track.entity';
+import { EventEmitter2, OnEvent } from '@nestjs/event-emitter';
 
 @Injectable()
 export class TrackService {
+  constructor(private eventEmitter: EventEmitter2) {}
+
   create(createTrackDto: CreateTrackDto) {
     const track = {
       id: randomUUID(),
@@ -46,10 +49,33 @@ export class TrackService {
       throw new NotFoundException(`Track with id: ${id} not found`);
     }
     tracks.splice(index, 1);
-    const indexFavorites = favorites.tracks.indexOf(id);
-    if (indexFavorites !== -1) {
-      favorites.tracks.splice(indexFavorites, 1);
-    }
+    this.eventEmitter.emit('track.remove', id, false);
     return;
+  }
+
+  @OnEvent('artist.remove')
+  removeArtistIds(artistId: string) {
+    const trackIds = tracks
+      .filter((track) => track.artistId === artistId)
+      .map((track) => track.id);
+    trackIds.forEach((trackId) => {
+      const trackIndex = tracks.findIndex((track) => track.id === trackId);
+      if (trackIndex !== -1) {
+        tracks[trackIndex].artistId = null;
+      }
+    });
+  }
+
+  @OnEvent('album.remove')
+  removeAlbumIds(albumId: string) {
+    const trackIds = tracks
+      .filter((track) => track.albumId === albumId)
+      .map((track) => track.id);
+    trackIds.forEach((trackId) => {
+      const trackIndex = tracks.findIndex((track) => track.id === trackId);
+      if (trackIndex !== -1) {
+        tracks[trackIndex].albumId = null;
+      }
+    });
   }
 }
