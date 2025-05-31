@@ -2,7 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateAlbumDto } from './dto/create-album.dto';
 import { UpdateAlbumDto } from './dto/update-album.dto';
 import { randomUUID } from 'node:crypto';
-import { albums } from 'src/data/database';
+import { albums, favorites, tracks } from 'src/data/database';
 
 @Injectable()
 export class AlbumService {
@@ -10,7 +10,7 @@ export class AlbumService {
     const album = {
       id: randomUUID(),
       ...createAlbumDto,
-    }
+    };
     albums.push(album);
     return album;
   }
@@ -20,7 +20,7 @@ export class AlbumService {
   }
 
   findOne(id: string) {
-    const album = albums.find(album => album.id === id);
+    const album = albums.find((album) => album.id === id);
     if (!album) {
       throw new NotFoundException(`Album with id: ${id} not found`);
     }
@@ -28,25 +28,38 @@ export class AlbumService {
   }
 
   update(id: string, updateAlbumDto: UpdateAlbumDto) {
-    const index = albums.findIndex(album => album.id === id);
+    const index = albums.findIndex((album) => album.id === id);
     if (index === -1) {
       throw new NotFoundException(`Album with id: ${id} not found`);
     }
     const newAlbum = {
       ...albums[index],
       ...updateAlbumDto,
-    }
+    };
     albums[index] = newAlbum;
 
     return newAlbum;
   }
 
   remove(id: string) {
-    const index = albums.findIndex(album => album.id === id);
-    if (index === -1) { 
-     throw new NotFoundException(`Album with id: ${id} not found`);
+    const index = albums.findIndex((album) => album.id === id);
+    if (index === -1) {
+      throw new NotFoundException(`Album with id: ${id} not found`);
     }
     albums.splice(index, 1);
-    return ;
+    const indexFavorites = favorites.albums.indexOf(id);
+    if (indexFavorites !== -1) {
+      favorites.albums.splice(indexFavorites, 1);
+    }
+    const trackIds = tracks
+      .filter((track) => track.albumId === id)
+      .map((track) => track.id);
+    trackIds.forEach((trackId) => {
+      const trackIndex = tracks.findIndex((track) => track.id === trackId);
+      if (trackIndex !== -1) {
+        tracks[trackIndex].albumId = null;
+      }
+    });
+    return;
   }
 }

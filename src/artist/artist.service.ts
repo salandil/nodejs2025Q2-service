@@ -2,7 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateArtistDto } from './dto/create-artist.dto';
 import { UpdateArtistDto } from './dto/update-artist.dto';
 import { randomUUID } from 'crypto';
-import { artists } from 'src/data/database';
+import { albums, artists, favorites, tracks } from 'src/data/database';
 
 @Injectable()
 export class ArtistService {
@@ -48,6 +48,28 @@ export class ArtistService {
       throw new NotFoundException(`Artist with id: ${id} not found`);
     }
     artists.splice(index, 1);
+    const indexFavorites = favorites.artists.indexOf(id);
+    if (indexFavorites !== -1) {
+      favorites.artists.splice(indexFavorites, 1);
+    }
+    const trackIds = tracks
+      .filter(track => track.artistId === id)
+      .map(track => track.id);
+      trackIds.forEach(trackId => {
+      const trackIndex = tracks.findIndex(track => track.id === trackId);
+      if (trackIndex !== -1) {
+        tracks[trackIndex].artistId = null;
+      }
+    });
+    const albumIds = albums
+      .filter(album => album.artistId === id)
+      .map(album => album.id);
+    albumIds.forEach(albumId => {
+      const albumIndex = albums.findIndex(album => album.id === albumId);
+      if (albumIndex !== -1) {
+        albums[albumIndex].artistId = null;
+      }
+    });
     return ;
   }
 }

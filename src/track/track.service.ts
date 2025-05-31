@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateTrackDto } from './dto/create-track.dto';
 import { UpdateTrackDto } from './dto/update-track.dto';
-import { tracks } from 'src/data/database';
+import { favorites, tracks } from 'src/data/database';
 import { randomUUID } from 'node:crypto';
 import { Track } from './entities/track.entity';
 
@@ -46,6 +46,10 @@ export class TrackService {
       throw new NotFoundException(`Track with id: ${id} not found`);
     }
     tracks.splice(index, 1);
+    const indexFavorites = favorites.tracks.indexOf(id);
+    if (indexFavorites !== -1) {
+      favorites.tracks.splice(indexFavorites, 1);
+    }
     return;
   }
 }
