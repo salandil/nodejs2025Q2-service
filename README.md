@@ -8,7 +8,7 @@
 ## Downloading
 
 ```
-git clone {repository URL}
+git clone https://github.com/salandil/nodejs2025Q2-service.git
 ```
 
 ## Installing NPM modules
@@ -17,15 +17,17 @@ git clone {repository URL}
 npm install
 ```
 
+## Setting up env
+
+```
+cp .env.example .env
+```
+
 ## Running application
 
 ```
 npm start
 ```
-
-After starting the app on port (4000 as default) you can open
-in your browser OpenAPI documentation by typing http://localhost:4000/doc/.
-For more information about OpenAPI/Swagger please visit https://swagger.io/.
 
 ## Testing
 
@@ -43,18 +45,6 @@ To run only one of all test suites
 npm run test -- <path to suite>
 ```
 
-To run all test with authorization
-
-```
-npm run test:auth
-```
-
-To run only specific test suite with authorization
-
-```
-npm run test:auth -- <path to suite>
-```
-
 ### Auto-fix and format
 
 ```
@@ -65,8 +55,51 @@ npm run lint
 npm run format
 ```
 
-### Debugging in VSCode
+# Project supports the following resources:
 
-Press <kbd>F5</kbd> to debug.
+## Users
 
-For more information, visit: https://code.visualstudio.com/docs/editor/debugging
+- `GET /user`: Get all users.
+- `POST /user`: Create a new user.
+
+- `GET /user/:id`: Get user by id.
+- `PATCH /user/:id`: Update user by id.
+- `DELETE /user/:id`: Delete user by id.
+
+## Artists
+
+- `GET /artist`: Get all artists.
+- `POST /artist`: Create a new artist.
+
+- `GET /artist/:id`: Get artist by id.
+- `PATCH /artist/:id`: Update artist by id.
+- `DELETE /artist/:id`: Delete artist by id.
+
+## Albums
+
+- `GET /album`: Get all albums.
+- `POST /album`: Create a new album.\
+
+- `GET /album/:id`: Get album by id.
+- `PATCH /album/:id`: Update album by id.
+- `DELETE /album/:id`: Delete album by id.
+
+## Tracks
+
+- `GET /track`: Get all tracks.
+- `POST /track`: Create a new track.
+
+- `GET /track/:id`: Get track by id.
+- `PATCH /track/:id`: Update track by id.
+- `DELETE /track/:id`: Delete track by id.
+
+## Favorites
+
+- `GET /favs`: Get all favorites.
+- `POST /favs/track/:id`: Add track to favorites.
+- `DELETE /favs/track/:id`: Delete track from favorites.
+- `POST /favs/album/:id`: Add album to favorites.
+- `DELETE /favs/album/:id`: Delete album from favorites.
+- `POST /favs/artist/:id`: Add artist to favorites.
+- `DELETE /favs/artist/:id`: Delete artist from favorites.
+
