@@ -9,6 +9,8 @@
     "node": ">=22.14.0"
   },
   "scripts": {
+    "docker:load": "npm install && npm run build && npm run start",
+    "docker:start": "docker-compose up --watch",
     "prebuild": "rimraf dist",
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",

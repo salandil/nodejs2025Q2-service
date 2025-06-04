@@ -1,0 +1,12 @@
+
+node_modules
+test
+Dockerfile
+.dockerignore
+docker-compose.yaml
+.git
+.gitignore
+.env.example
+dist
+jest.config.json
+README.md
