@@ -14,6 +14,7 @@ export class TrackService {
     const track = {
       id: randomUUID(),
       ...createTrackDto,
+      isFavorite: false,
     };
     tracks.push(track);
     return track;

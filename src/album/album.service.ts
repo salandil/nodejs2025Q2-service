@@ -13,6 +13,7 @@ export class AlbumService {
     const album = {
       id: randomUUID(),
       ...createAlbumDto,
+      isFavorite: false,
     };
     albums.push(album);
     return album;

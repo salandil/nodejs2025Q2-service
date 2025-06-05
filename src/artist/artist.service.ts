@@ -14,6 +14,7 @@ export class ArtistService {
       id: randomUUID(),
       name: createArtistDto.name,
       grammy: createArtistDto.grammy,
+      isFavorite: false,
     };
     artists.push(artist);
     return artist;
