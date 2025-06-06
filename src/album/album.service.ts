@@ -1,70 +1,50 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateAlbumDto } from './dto/create-album.dto';
 import { UpdateAlbumDto } from './dto/update-album.dto';
-import { randomUUID } from 'node:crypto';
-import { albums } from 'src/data/database';
-import { EventEmitter2, OnEvent } from '@nestjs/event-emitter';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Album } from './entities/album.entity';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class AlbumService {
-  constructor(private eventEmitter: EventEmitter2) {}
+  constructor(
+    @InjectRepository(Album)
+    private albumRepository: Repository<Album>,
+  ) {}
 
-  create(createAlbumDto: CreateAlbumDto) {
-    const album = {
-      id: randomUUID(),
-      ...createAlbumDto,
-      isFavorite: false,
-    };
-    albums.push(album);
-    return album;
+  async create(createAlbumDto: CreateAlbumDto) {
+    const newAlbum = await this.albumRepository.save(createAlbumDto);
+    return newAlbum;
   }
 
-  findAll() {
+  async findAll() {
+    const albums = await this.albumRepository.find();
     return albums;
   }
 
-  findOne(id: string) {
-    const album = albums.find((album) => album.id === id);
+  async findOne(id: string) {
+    const album = await this.albumRepository.findOne({ where: { id } });
     if (!album) {
       throw new NotFoundException(`Album with id: ${id} not found`);
     }
     return album;
   }
 
-  update(id: string, updateAlbumDto: UpdateAlbumDto) {
-    const index = albums.findIndex((album) => album.id === id);
-    if (index === -1) {
+  async update(id: string, updateAlbumDto: UpdateAlbumDto) {
+    const album = await this.albumRepository.findOne({ where: { id } });
+    if (!album) {
       throw new NotFoundException(`Album with id: ${id} not found`);
     }
-    const newAlbum = {
-      ...albums[index],
-      ...updateAlbumDto,
-    };
-    albums[index] = newAlbum;
-
+    const newAlbum = await this.albumRepository.update(id, updateAlbumDto);
     return newAlbum;
   }
 
-  @OnEvent('artist.remove')
-  removeArtistIds(artistId: string) {
-    const albumIds = albums
-      .filter((album) => album.artistId === artistId)
-      .map((album) => album.id);
-    albumIds.forEach((albumId) => {
-      const albumIndex = albums.findIndex((album) => album.id === albumId);
-      if (albumIndex !== -1) {
-        albums[albumIndex].artistId = null;
-      }
-    });
-  }
-
-  remove(id: string) {
-    const index = albums.findIndex((album) => album.id === id);
-    if (index === -1) {
+  async remove(id: string) {
+    const album = await this.albumRepository.findOne({ where: { id } });
+    if (!album) {
       throw new NotFoundException(`Album with id: ${id} not found`);
     }
-    albums.splice(index, 1);
-    this.eventEmitter.emit('album.remove', id, false);
+    await this.albumRepository.delete(id);
     return;
   }
 }
