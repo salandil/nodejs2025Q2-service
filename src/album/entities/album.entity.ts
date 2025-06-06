@@ -1,17 +1,17 @@
 import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 
-@Entity()
+@Entity({ name: 'Album' })
 export class Album {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn('uuid')
   id: string;
 
   @Column()
   name: string;
 
-  @Column()
+  @Column({ type: 'int' })
   year: number;
 
-  @Column()
+  @Column({ type: 'uuid', nullable: true })
   artistId: string | null;
 
   @Column({ default: false })

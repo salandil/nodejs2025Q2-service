@@ -1,14 +1,14 @@
 import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 
-@Entity()
+@Entity({ name: 'Artist' })
 export class Artist {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn('uuid')
   id: string;
 
   @Column()
   name: string;
 
-  @Column()
+  @Column({ type: 'boolean' })
   grammy: boolean;
 
   @Column({ default: false })
