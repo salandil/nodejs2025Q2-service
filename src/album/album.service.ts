@@ -4,10 +4,12 @@ import { UpdateAlbumDto } from './dto/update-album.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Album } from './entities/album.entity';
 import { Repository } from 'typeorm';
+import { EventEmitter2, OnEvent } from '@nestjs/event-emitter';
 
 @Injectable()
 export class AlbumService {
   constructor(
+    private eventEmitter: EventEmitter2,
     @InjectRepository(Album)
     private albumRepository: Repository<Album>,
   ) {}
@@ -44,7 +46,21 @@ export class AlbumService {
     if (!album) {
       throw new NotFoundException(`Album with id: ${id} not found`);
     }
+    this.eventEmitter.emit('album.remove', id);
     await this.albumRepository.delete(id);
+    return;
+  }
+
+  @OnEvent('artist.remove')
+  async removeArtist(id: string) {
+    await this.albumRepository.update(
+      {
+        artistId: id,
+      },
+      {
+        artistId: null,
+      },
+    );
     return;
   }
 }
