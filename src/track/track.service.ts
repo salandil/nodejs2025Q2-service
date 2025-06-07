@@ -1,22 +1,28 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateTrackDto } from './dto/create-track.dto';
 import { UpdateTrackDto } from './dto/update-track.dto';
 import { Track } from './entities/track.entity';
-import { EventEmitter2, OnEvent } from '@nestjs/event-emitter';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
 @Injectable()
 export class TrackService {
   constructor(
-    private eventEmitter: EventEmitter2,
     @InjectRepository(Track)
     private trackRepository: Repository<Track>,
   ) {}
 
   async create(createTrackDto: CreateTrackDto) {
-    const track = await this.trackRepository.save({ ...createTrackDto });
-    return track;
+    try {
+      const track = await this.trackRepository.save({ ...createTrackDto });
+      return track;
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
   }
 
   async findAll() {
@@ -49,32 +55,7 @@ export class TrackService {
     if (!track) {
       throw new NotFoundException(`Track with id: ${id} not found`);
     }
-    this.eventEmitter.emit('track.remove', id);
     await this.trackRepository.delete(id);
     return track;
-  }
-
-  @OnEvent('artist.remove')
-  async removeArtist(id: string) {
-    await this.trackRepository.update(
-      {
-        artistId: id,
-      },
-      {
-        artistId: null,
-      },
-    );
-  }
-
-  @OnEvent('album.remove')
-  async removeAlbum(id: string) {
-    await this.trackRepository.update(
-      {
-        albumId: id,
-      },
-      {
-        albumId: null,
-      },
-    );
   }
 }

@@ -1,4 +1,6 @@
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import { Album } from '../../album/entities/album.entity';
+import { Artist } from '../../artist/entities/artist.entity';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm';
 
 @Entity({ name: 'Track' })
 export class Track {
@@ -8,11 +10,23 @@ export class Track {
   @Column()
   name: string;
 
-  @Column({ type: 'uuid', nullable: true })
-  artistId: string | null;
+  @ManyToOne(() => Artist, (artist) => artist.id, {
+    nullable: true,
+    onDelete: 'SET NULL',
+  })
+  artist: Artist;
+
+  @ManyToOne(() => Album, (album) => album.id, {
+    nullable: true,
+    onDelete: 'SET NULL',
+  })
+  album: Album;
 
   @Column({ type: 'uuid', nullable: true })
-  albumId: string | null;
+  artistId: string;
+
+  @Column({ type: 'uuid', nullable: true })
+  albumId: string;
 
   @Column({ type: 'int' })
   duration: number;

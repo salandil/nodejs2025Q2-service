@@ -1,22 +1,27 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateAlbumDto } from './dto/create-album.dto';
 import { UpdateAlbumDto } from './dto/update-album.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Album } from './entities/album.entity';
 import { Repository } from 'typeorm';
-import { EventEmitter2, OnEvent } from '@nestjs/event-emitter';
 
 @Injectable()
 export class AlbumService {
   constructor(
-    private eventEmitter: EventEmitter2,
-    @InjectRepository(Album)
-    private albumRepository: Repository<Album>,
+    @InjectRepository(Album) private albumRepository: Repository<Album>,
   ) {}
 
   async create(createAlbumDto: CreateAlbumDto) {
-    const newAlbum = await this.albumRepository.save(createAlbumDto);
-    return newAlbum;
+    try {
+      const newAlbum = await this.albumRepository.save(createAlbumDto);
+      return newAlbum;
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
   }
 
   async findAll() {
@@ -37,7 +42,8 @@ export class AlbumService {
     if (!album) {
       throw new NotFoundException(`Album with id: ${id} not found`);
     }
-    const newAlbum = await this.albumRepository.update(id, updateAlbumDto);
+    await this.albumRepository.update(id, updateAlbumDto);
+    const newAlbum = await this.albumRepository.findOne({ where: { id } });
     return newAlbum;
   }
 
@@ -46,21 +52,7 @@ export class AlbumService {
     if (!album) {
       throw new NotFoundException(`Album with id: ${id} not found`);
     }
-    this.eventEmitter.emit('album.remove', id);
     await this.albumRepository.delete(id);
-    return;
-  }
-
-  @OnEvent('artist.remove')
-  async removeArtist(id: string) {
-    await this.albumRepository.update(
-      {
-        artistId: id,
-      },
-      {
-        artistId: null,
-      },
-    );
     return;
   }
 }

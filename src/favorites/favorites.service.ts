@@ -4,7 +4,6 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { OnEvent } from '@nestjs/event-emitter';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Album } from 'src/album/entities/album.entity';
 import { Artist } from 'src/artist/entities/artist.entity';
@@ -62,7 +61,6 @@ export class FavoritesService {
     };
   }
 
-  @OnEvent('track.remove')
   async removeTrack(id: string, check: boolean = true) {
     const track = await this.trackRepository.findOne({ where: { id } });
     if (!track && check) {
@@ -88,7 +86,6 @@ export class FavoritesService {
     };
   }
 
-  @OnEvent('album.remove')
   async removeAlbum(id: string, check: boolean = true) {
     const album = await this.albumRepository.findOne({ where: { id } });
     if (!album && check) {
@@ -114,7 +111,6 @@ export class FavoritesService {
     };
   }
 
-  @OnEvent('artist.remove')
   async removeArtist(id: string) {
     const artist = await this.artistRepository.findOne({ where: { id } });
     if (!artist) {
