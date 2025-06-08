@@ -11,13 +11,40 @@ services:
       - ${PORT}:${PORT}
     volumes:
       - node_modules:/lib-app/node_modules
+      - app_logs:/lib-app/logs
+    develop:
+      watch:
+        - action: sync
+          path: ./src
+          target: /usr/app/src
     networks:
-      - net
+      - lib-app-network
+    depends_on:
+      - lib-app-db
+
+  lib-app-db:
+    container_name: lib-app-db
+    build:
+      context: .
+      dockerfile: data/Dockerfile
+    ports:
+      - ${DB_PORT}:${DB_PORT}
+    env_file:
+      - .env
+    restart: on-failure
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - postgres-logs:/var/log/postgresql
+    networks:
+      - lib-app-network
 
 volumes:
   node_modules:
+  app_logs:
+  postgres-data:
+  postgres-logs:
 
 networks:
-  net:
-    name: net
+  lib-app-network:
+    name: lib-app-network
     driver: bridge

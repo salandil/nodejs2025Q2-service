@@ -10,7 +10,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import * as dotenv from 'dotenv';
 
 dotenv.config();
-
+const { DB_HOST, DB_PORT, DB_USERNAME, POSTGRES_PASSWORD } = process.env;
 @Module({
   imports: [
     UserModule,
@@ -20,10 +20,10 @@ dotenv.config();
     FavoritesModule,
     TypeOrmModule.forRoot({
       type: 'postgres',
-      host: process.env.DB_HOST,
-      port: parseInt(process.env.DB_PORT),
-      username: process.env.DB_USERNAME,
-      password: process.env.DB_PASSWORD,
+      host: DB_HOST,
+      port: parseInt(DB_PORT),
+      username: DB_USERNAME,
+      password: POSTGRES_PASSWORD,
       migrationsTableName: '_migrations',
       entities: [__dirname + '/**/*.entity{.ts,.js}'],
       migrations: [__dirname + '/migrations/**/*{.ts,.js}'],
