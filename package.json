@@ -23,13 +23,15 @@
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
+    "typeorm": "ts-node ./node_modules/typeorm/cli",
+    "typeorm:run-migrations": "npm run typeorm migration:run -- -d ./typeOrm.config.ts",
+    "typeorm:generate-migration": "npm run typeorm -- -d ./typeOrm.config.ts migration:generate ./migrations/library-app",
     "docker:load": "npm install && npm run build && npm run start",
     "docker:start": "docker-compose up --watch"
   },
   "dependencies": {
     "@nestjs/common": "^10.4.16",
     "@nestjs/core": "^10.4.15",
-    "@nestjs/event-emitter": "^2.1.1",
     "@nestjs/jwt": "^11.0.0",
     "@nestjs/mapped-types": "^2.1.0",
     "@nestjs/platform-express": "^10.4.15",
