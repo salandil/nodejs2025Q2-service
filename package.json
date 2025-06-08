@@ -28,7 +28,9 @@
     "typeorm:generate-migration": "npm run typeorm -- -d ./typeOrm.config.ts migration:generate ./migrations/library-app",
     "docker:load": "npm install --omit=dev && npm run typeorm:run-migrations && npm run start:dev",
     "docker:start": "docker-compose up --watch",
-    "docker:stop": "docker-compose down"
+    "docker:stop": "docker-compose down",
+    "docker:sec-scan": "docker scout cves salandil/nodejs2025q2-service-lib-app:latest",
+    "docker:images": "docker images"
   },
   "dependencies": {
     "@nestjs/common": "^10.4.16",
