@@ -2,8 +2,8 @@ import { DataSource } from 'typeorm';
 import { config } from 'dotenv';
 
 config();
-const { DB_NAME, POSTGRES_PASSWORD, DB_HOST, DB_PORT } = process.env;
-const DB_URL = `postgresql://${DB_NAME}:${POSTGRES_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_NAME}`;
+const { POSTGRES_USER, POSTGRES_PASSWORD, POSTGRES_HOST, POSTGRES_PORT, POSTGRES_DB } = process.env;
+const DB_URL = `postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}`;
 
 export default new DataSource({
   type: 'postgres',
