@@ -14,7 +14,7 @@ services:
       - app_logs:/lib-app/logs
     develop:
       watch:
-        - action: sync
+        - action: sync+restart
           path: ./src
           target: /usr/app/src
     networks:
