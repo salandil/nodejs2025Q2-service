@@ -48,6 +48,14 @@ export class UserService {
     return this.formatUser(user);
   }
 
+  async findUserByLogin(login: string) {
+    const user = await this.userRepository.findOne({ where: { login } });
+    if (!user) {
+      throw new NotFoundException(`User with login: ${login} not found`);
+    }
+    return user;
+  }
+
   async update(id: string, updateUserDto: UpdateUserDto) {
     const user = await this.userRepository.findOne({ where: { id } });
     if (!user) {
