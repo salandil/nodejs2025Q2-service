@@ -21,7 +21,7 @@ export class AuthService {
       const user = await this.userService.create(createUserDto);
       return {
         id: user.id,
-        message: 'User is created.',
+        message: 'User is successfully created',
       };
     } catch (error) {
       throw new BadRequestException(error.message);
@@ -32,11 +32,14 @@ export class AuthService {
     const { login, password } = createUserDto;
     const user = await this.userService.findUserByLogin(login);
 
-    const isPasswordValid =
-      user?.password && (await bcrypt.compare(password, user.password));
+    if (!user) {
+      throw new ForbiddenException('Credentials are incorrect');
+    }
+
+    const isPasswordValid = await bcrypt.compare(password, user.password);
 
     if (!isPasswordValid) {
-      throw new ForbiddenException('Invalid login or password');
+      throw new ForbiddenException('Credentials are incorrect');
     }
 
     return this.signToken({ userId: user.id, login });
@@ -44,7 +47,7 @@ export class AuthService {
 
   async refresh(refreshToken: string) {
     if (!refreshToken) {
-      throw new UnauthorizedException('There is no refresh token in body');
+      throw new UnauthorizedException('No refresh token in body');
     }
 
     try {

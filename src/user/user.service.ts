@@ -8,13 +8,17 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UserService {
+  private readonly salt: number;
   constructor(
     @InjectRepository(User)
     private userRepository: Repository<User>,
-  ) {}
+  ) {
+    this.salt = Number(process.env.CRYPT_SALT);
+  }
   formatUser(user: User) {
     return {
       id: user.id,
@@ -25,11 +29,13 @@ export class UserService {
     };
   }
   async create(createUserDto: CreateUserDto) {
+    const passwordHash = await bcrypt.hash(createUserDto.password, this.salt);
     const user = {
       version: 1,
       createdAt: new Date(),
       updatedAt: new Date(),
       ...createUserDto,
+      password: passwordHash,
     };
     const newUser = await this.userRepository.save(user);
     return this.formatUser(newUser);
@@ -49,7 +55,10 @@ export class UserService {
   }
 
   async findUserByLogin(login: string) {
-    const user = await this.userRepository.findOne({ where: { login } });
+    const user = await this.userRepository.findOne({
+      where: { login },
+      order: { createdAt: 'DESC' },
+    });
     if (!user) {
       throw new NotFoundException(`User with login: ${login} not found`);
     }
@@ -61,12 +70,21 @@ export class UserService {
     if (!user) {
       throw new NotFoundException(`User with id: ${id} not found`);
     }
-    if (user.password !== updateUserDto.oldPassword) {
+    const passwordsEqual = await bcrypt.compare(
+      updateUserDto.oldPassword,
+      user.password,
+    );
+    if (!passwordsEqual) {
       throw new ForbiddenException(`Old password is incorrect`);
     }
+
+    const passwordHash = await bcrypt.hash(
+      updateUserDto.newPassword,
+      this.salt,
+    );
     const newUser = {
       ...user,
-      password: updateUserDto.newPassword,
+      password: passwordHash,
       version: user.version + 1,
       updatedAt: new Date(),
     };
