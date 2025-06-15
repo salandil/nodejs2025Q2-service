@@ -1,4 +1,5 @@
 import {
+  ConflictException,
   ForbiddenException,
   Injectable,
   NotFoundException,
@@ -29,6 +30,14 @@ export class UserService {
     };
   }
   async create(createUserDto: CreateUserDto) {
+    const existingUser = await this.userRepository.findOne({
+      where: { login: createUserDto.login },
+    });
+
+    if (existingUser) {
+      throw new ConflictException('Current login is already in use');
+    }
+
     const passwordHash = await bcrypt.hash(createUserDto.password, this.salt);
     const user = {
       version: 1,

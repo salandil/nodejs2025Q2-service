@@ -7,5 +7,6 @@ docker-compose.yaml
 .git
 .gitignore
 dist
+logs
 jest.config.json
 README.md

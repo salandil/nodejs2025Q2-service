@@ -15,7 +15,9 @@ export class RequestInterceptor implements NestInterceptor {
   intercept(_: ExecutionContext, next: CallHandler): Observable<any> {
     return next.handle().pipe(
       catchError((err) => {
-        this.loggingService.error(`Uncaught Exception: ${err.message}`);
+        if (typeof err !== 'object' || !('status' in err)) {
+          this.loggingService.error(`Uncaught Exception: ${err.message}`);
+        }
         return throwError(() => err);
       }),
     );

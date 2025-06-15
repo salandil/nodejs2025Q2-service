@@ -9,13 +9,14 @@ import { RequestInterceptor } from './logging/exceptions/request.interceptor';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  const loggingService = new LoggingService();
+  const logging = new LoggingService();
+  await logging.checkFolder();
 
   process.on('unhandledRejection', async (err: Error) => {
-    loggingService.error(`Unhandled Rejection. ${err.message}`);
+    logging.error(`Unhandled Rejection. ${err.message}`);
   });
 
-  app.useGlobalInterceptors(new RequestInterceptor(loggingService));
+  app.useGlobalInterceptors(new RequestInterceptor(logging));
 
   const httpAdapterHost = app.get(HttpAdapterHost);
 
