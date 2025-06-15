@@ -6,7 +6,7 @@ services:
       dockerfile: Dockerfile
     env_file:
       - .env
-    restart: always
+    restart: on-failure
     ports:
       - ${PORT}:${PORT}
     volumes:
@@ -14,9 +14,9 @@ services:
       - app_logs:/lib-app/logs
     develop:
       watch:
-        - action: sync+restart
+        - action: sync
           path: ./src
-          target: /usr/app/src
+          target: /lib-app/src
     networks:
       - lib-app-network
     depends_on:
