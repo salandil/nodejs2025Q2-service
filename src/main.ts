@@ -13,7 +13,11 @@ async function bootstrap() {
   await logging.checkFolder();
 
   process.on('unhandledRejection', async (err: Error) => {
-    logging.error(`Unhandled Rejection. ${err.message}`);
+    const errorMessage =
+      typeof err === 'object' && 'stack' in err
+        ? err.stack || err
+        : JSON.stringify(err);
+    logging.error(`Unhandled Rejection. ${errorMessage}`);
   });
 
   app.useGlobalInterceptors(new RequestInterceptor(logging));

@@ -92,9 +92,9 @@ Logs are created in files named log\_{num}.txt and error\_{num}.txt.<br>
 - Request and response data of successful requests is logged in log\_{num}.txt file.
   File rotation happens when log (error log) file reaches maximum size (a new log file created).<br>
   `LOG_LEVEL` is responsible for collecting logs of specific level (and all previous level including).
-- For 0 value will only basic logs (successful responses and requests data) wll be saved.
-- For 1 value will error logs will be added to the basic ones.
-- For 2 value warning logs (400 - 500 not including response codes) will be logged also.
+- 0 value will log only errors (500+ errors and unhandled rejections, uncaught exceptions) will be saved.
+- 1 value adds warning logs (400 - 500 not including response codes) to errors.
+- 2 value adds basic logs (successful responses and requests data) to the previous scope of logs.
 
 In Docker logs are stored in the volume `app_logs`. You can open your docker UI interface and check it's values throw it.
 
