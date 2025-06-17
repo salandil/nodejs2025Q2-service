@@ -79,6 +79,12 @@ For example:
 npm run test:auth -- users.e2e.spec.ts
 ```
 
+To run tests for refresh flow
+
+```
+npm run test:refresh
+```
+
 # Logging Service
 
 Logs directory is specified in `LOGS_LOG_FOLDER` and it is `logs` by default<br>
