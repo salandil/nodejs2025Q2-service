@@ -1,0 +1,50 @@
+services:
+  lib-app:
+    container_name: lib-app
+    build:
+      context: .
+      dockerfile: Dockerfile
+    env_file:
+      - .env
+    restart: on-failure
+    ports:
+      - ${PORT}:${PORT}
+    volumes:
+      - node_modules:/lib-app/node_modules
+      - app_logs:/lib-app/logs
+    develop:
+      watch:
+        - action: sync
+          path: ./src
+          target: /lib-app/src
+    networks:
+      - lib-app-network
+    depends_on:
+      - lib-app-db
+
+  lib-app-db:
+    container_name: lib-app-db
+    build:
+      context: .
+      dockerfile: data/Dockerfile
+    ports:
+      - ${POSTGRES_PORT}:${POSTGRES_PORT}
+    env_file:
+      - .env
+    restart: on-failure
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - postgres-logs:/var/log/postgresql
+    networks:
+      - lib-app-network
+
+volumes:
+  node_modules:
+  app_logs:
+  postgres-data:
+  postgres-logs:
+
+networks:
+  lib-app-network:
+    name: lib-app-network
+    driver: bridge
